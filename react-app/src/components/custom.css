@@ -1,0 +1,51 @@
+.custom-navbar {
+    background: linear-gradient(to bottom, rgb(0, 191, 255), rgb(255, 255, 255)); /* Gradient od niebieskiego do białego, ustawiony pionowo */
+  }
+
+  .grid-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .menu {
+    width: 100%;
+    max-width: 600px; 
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  
+  .menu-header {
+    display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  }
+  
+  .menu-header h2 {
+    margin: 0;
+  }
+  
+  .menu-items {
+    border-top: 1px solid #ccc;
+  }
+  
+  .menu-item {
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .menu-item:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .menu-item:first-child {
+    border-top: none;
+  }
+  .menu-header .form-control {
+  margin: 0 10px; /* Dodajemy odstęp między przyciskiem a polem tekstowym */
+}
+  
+  
