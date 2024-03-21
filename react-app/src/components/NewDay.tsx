@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, FormControl, InputGroup } from "react-bootstrap";
+import { Button, FormControl } from "react-bootstrap";
 import "./custom.css";
 
 interface NewDayComponentProps {
@@ -16,6 +16,10 @@ function NewDayComponent({
   const [task, setTask] = useState<string>("");
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
+  useEffect(() => {
+    setSelectedItems([]);
+  }, [tasks]);
+
   const handleAddTask = () => {
     if (task.trim() !== "") {
       updateTasks([...tasks, task]);
@@ -29,7 +33,9 @@ function NewDayComponent({
     updateTasks(updatedTasks);
 
     const updatedSelectedItems = selectedItems.filter((item) => item !== index);
-    setSelectedItems(updatedSelectedItems);
+    setSelectedItems(
+      updatedSelectedItems.map((item) => (item > index ? item - 1 : item))
+    );
   };
 
   const handleMenuClick = (index: number) => {
@@ -45,10 +51,11 @@ function NewDayComponent({
     }
   };
 
+  const handleDailyTask = (index: number) => {};
+
   const handleClearTasks = () => {
-    const updatedTasks = [...tasks];
-    updatedTasks.splice(0, tasks.length);
-    updateTasks(updatedTasks);
+    updateTasks([]);
+    setSelectedItems([]);
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,6 +97,12 @@ function NewDayComponent({
               >
                 {task}
 
+                <Button
+                  variant="warning"
+                  onClick={() => handleDailyTask(index)}
+                >
+                  D
+                </Button>
                 <Button
                   variant="danger"
                   onClick={() => handleDeleteTask(index)}
