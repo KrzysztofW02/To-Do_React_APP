@@ -16,10 +16,10 @@ function NavbarFunction({ onNavbarItemClick }: NavbarProps) {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link href="#home" onClick={() => onNavbarItemClick("Home")}>
-              My Day
+              Home
             </Nav.Link>
             <Nav.Link href="#link" onClick={() => onNavbarItemClick("NewDay")}>
-              To-Do
+              My day
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>

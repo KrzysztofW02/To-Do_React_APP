@@ -8,7 +8,7 @@ function App() {
     "Home" | "NewDay"
   >("Home");
   const [dayName, setDayName] = useState<string>("");
-  const [days, setDays] = useState<string[]>([]);
+  const [days, setDays] = useState<Record<string, string[]>>({});
 
   const handleNavbarItemClick = (component: "Home" | "NewDay") => {
     setDisplayedComponent(component);
@@ -20,7 +20,12 @@ function App() {
     setDisplayedComponent("NewDay");
   };
 
-  console.log(dayName);
+  const updateTasksForDay = (dayName: string, newTasks: string[]) => {
+    setDays((prevDays) => ({
+      ...prevDays,
+      [dayName]: newTasks,
+    }));
+  };
 
   return (
     <>
@@ -36,7 +41,11 @@ function App() {
           />
         )}
         {displayedComponent === "NewDay" && (
-          <NewDayComponent dayName={dayName} />
+          <NewDayComponent
+            dayName={dayName}
+            tasks={days[dayName] || []}
+            updateTasks={(newTasks) => updateTasksForDay(dayName, newTasks)}
+          />
         )}
       </div>
     </>

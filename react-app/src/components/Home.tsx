@@ -1,3 +1,4 @@
+// HomeComponent.tsx
 import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
@@ -5,8 +6,8 @@ import "react-datepicker/dist/react-datepicker.css";
 
 interface HomeComponentProps {
   onMenuClick: (dayName: string) => void;
-  days: string[];
-  setDays: React.Dispatch<React.SetStateAction<string[]>>;
+  days: Record<string, string[]>;
+  setDays: React.Dispatch<React.SetStateAction<Record<string, string[]>>>;
 }
 
 function HomeComponent({ onMenuClick, days, setDays }: HomeComponentProps) {
@@ -20,8 +21,11 @@ function HomeComponent({ onMenuClick, days, setDays }: HomeComponentProps) {
   const handleConfirmDay = () => {
     if (startDate) {
       const formattedDate = startDate.toLocaleDateString();
-      setDays([...days, formattedDate]);
-      setStartDate(null); // Resetujemy wybraną datę
+      setDays({
+        ...days,
+        [formattedDate]: [],
+      });
+      setStartDate(null);
       setShowInput(false);
     }
   };
@@ -44,6 +48,7 @@ function HomeComponent({ onMenuClick, days, setDays }: HomeComponentProps) {
               <DatePicker
                 selected={startDate}
                 onChange={(date: Date | null) => setStartDate(date)}
+                placeholderText="Click here to select a date"
               />
               <Button variant="primary" onClick={handleConfirmDay}>
                 Confirm
@@ -52,7 +57,7 @@ function HomeComponent({ onMenuClick, days, setDays }: HomeComponentProps) {
           )}
         </div>
         <div className="menu-items">
-          {days.map((day, index) => (
+          {Object.keys(days).map((day, index) => (
             <div
               className="menu-item"
               key={index}

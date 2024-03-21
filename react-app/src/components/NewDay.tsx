@@ -1,34 +1,52 @@
 import React, { useState, useEffect } from "react";
-import { Button, FormControl } from "react-bootstrap";
+import { Button, FormControl, InputGroup } from "react-bootstrap";
 import "./custom.css";
 
 interface NewDayComponentProps {
   dayName: string;
+  tasks: string[];
+  updateTasks: (newTasks: string[]) => void;
 }
 
-function NewDayComponent({ dayName }: NewDayComponentProps) {
+function NewDayComponent({
+  dayName,
+  tasks,
+  updateTasks,
+}: NewDayComponentProps) {
   const [task, setTask] = useState<string>("");
-  const [showInput, setShowInput] = useState<boolean>(false);
-  const [tasks, setTasks] = useState<string[]>([]);
-
-  useEffect(() => {
-    console.log("dayName:", dayName);
-  }, [dayName]);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
   const handleAddTask = () => {
-    setShowInput(true);
+    if (task.trim() !== "") {
+      updateTasks([...tasks, task]);
+      setTask("");
+    }
+  };
+
+  const handleDeleteTask = (index: number) => {
+    const updatedTasks = [...tasks];
+    updatedTasks.splice(index, 1);
+    updateTasks(updatedTasks);
+
+    const updatedSelectedItems = selectedItems.filter((item) => item !== index);
+    setSelectedItems(updatedSelectedItems);
+  };
+
+  const handleMenuClick = (index: number) => {
+    const isSelected = selectedItems.includes(index);
+
+    if (isSelected) {
+      const updatedSelectedItems = selectedItems.filter(
+        (item) => item !== index
+      );
+      setSelectedItems(updatedSelectedItems);
+    } else {
+      setSelectedItems([...selectedItems, index]);
+    }
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTask(event.target.value);
-  };
-
-  const handleConfirmTask = () => {
-    if (task.trim() !== "") {
-      setTasks([...tasks, task]);
-      setTask("");
-      setShowInput(false);
-    }
   };
 
   return (
@@ -37,29 +55,34 @@ function NewDayComponent({ dayName }: NewDayComponentProps) {
       <div className="grid-container">
         <div className="menu">
           <div className="menu-header">
-            {!showInput && (
-              <Button variant="primary" onClick={handleAddTask}>
-                Add task
-              </Button>
-            )}
-            {showInput && (
-              <React.Fragment>
-                <FormControl
-                  type="text"
-                  placeholder="Enter task..."
-                  value={task}
-                  onChange={handleInputChange}
-                />
-                <Button variant="primary" onClick={handleConfirmTask}>
-                  Confirm
-                </Button>
-              </React.Fragment>
-            )}
+            <FormControl
+              type="text"
+              placeholder="Enter task..."
+              value={task}
+              onChange={handleInputChange}
+            />
+            <Button variant="primary" onClick={handleAddTask}>
+              Add
+            </Button>
           </div>
           <div className="menu-items">
             {tasks.map((task, index) => (
-              <div className="menu-item" key={index}>
+              <div
+                onClick={() => handleMenuClick(index)}
+                className={
+                  "menu-item" +
+                  (selectedItems.includes(index) ? " selected" : "")
+                }
+                key={index}
+              >
                 {task}
+
+                <Button
+                  variant="danger"
+                  onClick={() => handleDeleteTask(index)}
+                >
+                  X
+                </Button>
               </div>
             ))}
           </div>
