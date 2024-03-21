@@ -45,6 +45,12 @@ function NewDayComponent({
     }
   };
 
+  const handleClearTasks = () => {
+    const updatedTasks = [...tasks];
+    updatedTasks.splice(0, tasks.length);
+    updateTasks(updatedTasks);
+  };
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTask(event.target.value);
   };
@@ -86,6 +92,15 @@ function NewDayComponent({
               </div>
             ))}
           </div>
+          {tasks.length > 1 && (
+            <Button
+              className="clear-button"
+              variant="info"
+              onClick={handleClearTasks}
+            >
+              Clear
+            </Button>
+          )}
         </div>
       </div>
     </>
