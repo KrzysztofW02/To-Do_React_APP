@@ -55,6 +55,12 @@ function NewDayComponent({
     setTask(event.target.value);
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleAddTask();
+    }
+  };
+
   return (
     <>
       <div className="day-name">{dayName}</div>
@@ -66,6 +72,7 @@ function NewDayComponent({
               placeholder="Enter task..."
               value={task}
               onChange={handleInputChange}
+              onKeyDown={handleKeyPress}
             />
             <Button variant="primary" onClick={handleAddTask}>
               Add

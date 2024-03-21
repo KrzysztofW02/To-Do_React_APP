@@ -1,4 +1,3 @@
-// HomeComponent.tsx
 import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
@@ -34,6 +33,12 @@ function HomeComponent({ onMenuClick, days, setDays }: HomeComponentProps) {
     onMenuClick(dayName);
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleConfirmDay();
+    }
+  };
+
   return (
     <div className="grid-container">
       <div className="menu">
@@ -49,6 +54,7 @@ function HomeComponent({ onMenuClick, days, setDays }: HomeComponentProps) {
                 selected={startDate}
                 onChange={(date: Date | null) => setStartDate(date)}
                 placeholderText="Click here to select a date"
+                onKeyDown={handleKeyPress}
               />
               <Button variant="primary" onClick={handleConfirmDay}>
                 Confirm
