@@ -1,27 +1,27 @@
 import React, { useState } from "react";
-import { Button, FormControl } from "react-bootstrap";
+import { Button } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface HomeComponentProps {
   onMenuClick: (dayName: string) => void;
+  days: string[];
+  setDays: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-function HomeComponent({ onMenuClick }: HomeComponentProps) {
-  const [day, setDay] = useState<string>("");
+function HomeComponent({ onMenuClick, days, setDays }: HomeComponentProps) {
+  const [startDate, setStartDate] = useState<Date | null>(null);
   const [showInput, setShowInput] = useState<boolean>(false);
-  const [days, setDays] = useState<string[]>([]);
 
   const handleAddDay = () => {
     setShowInput(true);
   };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDay(event.target.value);
-  };
-
   const handleConfirmDay = () => {
-    if (day.trim() !== "") {
-      setDays([...days, day]);
-      setDay("");
+    if (startDate) {
+      const formattedDate = startDate.toLocaleDateString();
+      setDays([...days, formattedDate]);
+      setStartDate(null); // Resetujemy wybraną datę
       setShowInput(false);
     }
   };
@@ -41,11 +41,9 @@ function HomeComponent({ onMenuClick }: HomeComponentProps) {
           )}
           {showInput && (
             <React.Fragment>
-              <FormControl
-                type="text"
-                placeholder="Enter name (e.g. date of day)"
-                value={day}
-                onChange={handleInputChange}
+              <DatePicker
+                selected={startDate}
+                onChange={(date: Date | null) => setStartDate(date)}
               />
               <Button variant="primary" onClick={handleConfirmDay}>
                 Confirm

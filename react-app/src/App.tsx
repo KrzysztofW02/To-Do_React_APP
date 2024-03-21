@@ -8,6 +8,7 @@ function App() {
     "Home" | "NewDay"
   >("Home");
   const [dayName, setDayName] = useState<string>("");
+  const [days, setDays] = useState<string[]>([]);
 
   const handleNavbarItemClick = (component: "Home" | "NewDay") => {
     setDisplayedComponent(component);
@@ -28,7 +29,11 @@ function App() {
       </div>
       <div>
         {displayedComponent === "Home" && (
-          <HomeComponent onMenuClick={handleMenuItemClick} />
+          <HomeComponent
+            onMenuClick={handleMenuItemClick}
+            days={days}
+            setDays={setDays}
+          />
         )}
         {displayedComponent === "NewDay" && (
           <NewDayComponent dayName={dayName} />
