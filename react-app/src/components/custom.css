@@ -69,6 +69,20 @@
   margin-top: 10px;
   }
 
+  .menu-item.daily-task {
+    background-color: blue
+  }
+  
+  .menu-item > span {
+    flex-grow: 1;
+  }
+  
+  .menu-item > div {
+    display: flex;
+    gap: 5px;
+  }
+  
+
 
   
   

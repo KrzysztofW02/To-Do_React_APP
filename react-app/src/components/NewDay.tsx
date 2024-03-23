@@ -15,6 +15,7 @@ function NewDayComponent({
 }: NewDayComponentProps) {
   const [task, setTask] = useState<string>("");
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [dailyTasks, setDailyTasks] = useState<string[]>([]);
 
   useEffect(() => {
     setSelectedItems([]);
@@ -33,28 +34,40 @@ function NewDayComponent({
     updateTasks(updatedTasks);
 
     const updatedSelectedItems = selectedItems.filter((item) => item !== index);
-    setSelectedItems(
-      updatedSelectedItems.map((item) => (item > index ? item - 1 : item))
-    );
+    setSelectedItems(updatedSelectedItems);
   };
 
   const handleMenuClick = (index: number) => {
     const isSelected = selectedItems.includes(index);
+    const isDailyTask = dailyTasks.includes(tasks[index]);
 
-    if (isSelected) {
+    if (!isSelected && !isDailyTask) {
+      setSelectedItems([...selectedItems, index]);
+    } else {
       const updatedSelectedItems = selectedItems.filter(
         (item) => item !== index
       );
       setSelectedItems(updatedSelectedItems);
-    } else {
-      setSelectedItems([...selectedItems, index]);
     }
   };
 
-  const handleDailyTask = (index: number) => {};
+  const handleDailyTask = (index: number) => {
+    const taskToMove = tasks[index];
+    const isAlreadyDailyTask = dailyTasks.includes(taskToMove);
+
+    if (isAlreadyDailyTask) {
+      const updatedDailyTasks = dailyTasks.filter(
+        (task) => task !== taskToMove
+      );
+      setDailyTasks(updatedDailyTasks);
+    } else {
+      setDailyTasks([...dailyTasks, taskToMove]);
+    }
+  };
 
   const handleClearTasks = () => {
-    updateTasks([]);
+    const updatedTasks = tasks.filter((task) => dailyTasks.includes(task));
+    updateTasks(updatedTasks);
     setSelectedItems([]);
   };
 
@@ -91,24 +104,26 @@ function NewDayComponent({
                 onClick={() => handleMenuClick(index)}
                 className={
                   "menu-item" +
-                  (selectedItems.includes(index) ? " selected" : "")
+                  (selectedItems.includes(index) ? " selected" : "") +
+                  (dailyTasks.includes(task) ? " daily-task" : "")
                 }
                 key={index}
               >
-                {task}
-
-                <Button
-                  variant="warning"
-                  onClick={() => handleDailyTask(index)}
-                >
-                  D
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => handleDeleteTask(index)}
-                >
-                  X
-                </Button>
+                <span>{task}</span>
+                <div>
+                  <Button
+                    variant="warning"
+                    onClick={() => handleDailyTask(index)}
+                  >
+                    D
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={() => handleDeleteTask(index)}
+                  >
+                    X
+                  </Button>
+                </div>
               </div>
             ))}
           </div>
