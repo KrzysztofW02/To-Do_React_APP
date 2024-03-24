@@ -1,15 +1,22 @@
+// HomeComponent.tsx
 import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 interface HomeComponentProps {
-  onMenuClick: (dayName: string) => void;
+  onMenuClick: (dayName: string, dailyTasks: string[]) => void;
   days: Record<string, string[]>;
   setDays: React.Dispatch<React.SetStateAction<Record<string, string[]>>>;
+  dailyTasks: string[]; // Dodane dailyTasks
 }
 
-function HomeComponent({ onMenuClick, days, setDays }: HomeComponentProps) {
+function HomeComponent({
+  onMenuClick,
+  days,
+  setDays,
+  dailyTasks,
+}: HomeComponentProps) {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [showInput, setShowInput] = useState<boolean>(false);
 
@@ -30,7 +37,7 @@ function HomeComponent({ onMenuClick, days, setDays }: HomeComponentProps) {
   };
 
   const handleMenuClick = (dayName: string) => {
-    onMenuClick(dayName);
+    onMenuClick(dayName, dailyTasks); // Przekazywanie dailyTasks do NewDayComponent
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {

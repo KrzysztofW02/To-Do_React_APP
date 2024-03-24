@@ -1,3 +1,4 @@
+// App.tsx
 import React, { useState } from "react";
 import NavbarFunction from "./components/Navbar";
 import NewDayComponent from "./components/NewDay";
@@ -9,6 +10,7 @@ function App() {
   >("Home");
   const [dayName, setDayName] = useState<string>("");
   const [days, setDays] = useState<Record<string, string[]>>({});
+  const [dailyTasks, setDailyTasks] = useState<string[]>([]); // Dodane dailyTasks
 
   const handleNavbarItemClick = (component: "Home" | "NewDay") => {
     setDisplayedComponent(component);
@@ -17,6 +19,12 @@ function App() {
   const handleMenuItemClick = (dayName: string) => {
     console.log("Kliknięto element menu:", dayName);
     setDayName(dayName);
+    setDisplayedComponent("NewDay");
+  };
+
+  const handleDailyButtonClick = (dailyTask: string[]) => {
+    console.log("Zapisano task jako daily", dailyTask);
+    setDailyTasks(dailyTask); // Aktualizacja dailyTasks
     setDisplayedComponent("NewDay");
   };
 
@@ -38,10 +46,13 @@ function App() {
             onMenuClick={handleMenuItemClick}
             days={days}
             setDays={setDays}
+            dailyTasks={dailyTasks} // Przekazanie dailyTasks do HomeComponent
           />
         )}
         {displayedComponent === "NewDay" && (
           <NewDayComponent
+            dailyTasks={dailyTasks}
+            onButtonClick={handleDailyButtonClick}
             dayName={dayName}
             tasks={days[dayName] || []}
             updateTasks={(newTasks) => updateTasksForDay(dayName, newTasks)}

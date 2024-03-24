@@ -1,25 +1,29 @@
+// NewDay.tsx
 import React, { useState, useEffect } from "react";
 import { Button, FormControl } from "react-bootstrap";
 import "./custom.css";
 
 interface NewDayComponentProps {
   dayName: string;
+  dailyTasks: string[];
   tasks: string[];
+  onButtonClick: (dailyTasks: string[]) => void;
   updateTasks: (newTasks: string[]) => void;
 }
 
 function NewDayComponent({
   dayName,
+  dailyTasks,
   tasks,
   updateTasks,
+  onButtonClick,
 }: NewDayComponentProps) {
   const [task, setTask] = useState<string>("");
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
-  const [dailyTasks, setDailyTasks] = useState<string[]>([]);
 
   useEffect(() => {
     setSelectedItems([]);
-  }, [tasks]);
+  }, [tasks, dayName]);
 
   const handleAddTask = () => {
     if (task.trim() !== "") {
@@ -39,9 +43,8 @@ function NewDayComponent({
 
   const handleMenuClick = (index: number) => {
     const isSelected = selectedItems.includes(index);
-    const isDailyTask = dailyTasks.includes(tasks[index]);
 
-    if (!isSelected && !isDailyTask) {
+    if (!isSelected) {
       setSelectedItems([...selectedItems, index]);
     } else {
       const updatedSelectedItems = selectedItems.filter(
@@ -59,14 +62,15 @@ function NewDayComponent({
       const updatedDailyTasks = dailyTasks.filter(
         (task) => task !== taskToMove
       );
-      setDailyTasks(updatedDailyTasks);
+      onButtonClick(updatedDailyTasks);
     } else {
-      setDailyTasks([...dailyTasks, taskToMove]);
+      const updatedDailyTasks = [...dailyTasks, taskToMove];
+      onButtonClick(updatedDailyTasks);
     }
   };
 
   const handleClearTasks = () => {
-    const updatedTasks = tasks.filter((task) => dailyTasks.includes(task));
+    const updatedTasks = tasks.filter((task) => !dailyTasks.includes(task));
     updateTasks(updatedTasks);
     setSelectedItems([]);
   };
@@ -84,6 +88,7 @@ function NewDayComponent({
   return (
     <>
       <div className="day-name">{dayName}</div>
+
       <div className="grid-container">
         <div className="menu">
           <div className="menu-header">
@@ -106,6 +111,36 @@ function NewDayComponent({
                   "menu-item" +
                   (selectedItems.includes(index) ? " selected" : "") +
                   (dailyTasks.includes(task) ? " daily-task" : "")
+                }
+                key={index}
+              >
+                <span>{task}</span>
+                <div>
+                  <Button
+                    variant="warning"
+                    onClick={() => handleDailyTask(index)}
+                  >
+                    D
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={() => handleDeleteTask(index)}
+                  >
+                    X
+                  </Button>
+                </div>
+              </div>
+            ))}
+            {/* Dodajemy dailyTasks jako normalne elementy menu */}
+            {dailyTasks.map((task, index) => (
+              <div
+                onClick={() => handleMenuClick(tasks.length + index)}
+                className={
+                  "menu-item" +
+                  (selectedItems.includes(tasks.length + index)
+                    ? " selected"
+                    : "") +
+                  " daily-task"
                 }
                 key={index}
               >
