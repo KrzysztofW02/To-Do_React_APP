@@ -11,14 +11,25 @@ function NavbarFunction({ onNavbarItemClick }: NavbarProps) {
   return (
     <Navbar expand="lg" className="custom-navbar">
       <Container>
-        <Navbar.Brand href="#home">To-Do App</Navbar.Brand>
+        <Navbar.Brand className="navbar-text" href="#home">
+          To-Do App
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="#home" onClick={() => onNavbarItemClick("Home")}>
+            <Nav.Link
+              className="navbar-text"
+              href="#home"
+              onClick={() => onNavbarItemClick("Home")}
+            >
               Home
             </Nav.Link>
-            <Nav.Link href="#link" onClick={() => onNavbarItemClick("NewDay")}>
+
+            <Nav.Link
+              className="navbar-text"
+              href="#link"
+              onClick={() => onNavbarItemClick("NewDay")}
+            >
               My day
             </Nav.Link>
           </Nav>

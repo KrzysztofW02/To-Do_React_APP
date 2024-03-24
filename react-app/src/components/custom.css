@@ -1,5 +1,6 @@
 .custom-navbar {
-    background: linear-gradient(to bottom, rgb(0, 191, 255), rgb(255, 255, 255)); /* Gradient od niebieskiego do białego, ustawiony pionowo */
+    
+    background: #2CBFA4
   }
 
   .grid-container {
@@ -41,8 +42,8 @@
   align-items: center;
   padding: 10px;
   cursor: pointer;
-
   }
+
   
   .menu-item:hover {
     background-color: #e0e0e0;
@@ -59,10 +60,12 @@
   text-align: center;
   font-size: 30px;
   margin-top: 100px;
+  color: #2CBFA4;
+  font-weight: bold;
  }
 
  .menu-item.selected {
-  background-color: rgb(77, 255, 77);
+  background-color: #2CBFA4;
 }
 
 .menu .clear-button {
@@ -70,7 +73,7 @@
   }
 
   .menu-item.daily-task {
-    background-color: blue
+    background-color: rgba(24, 158, 220, 0.941)
   }
   
   .menu-item > span {
@@ -80,6 +83,12 @@
   .menu-item > div {
     display: flex;
     gap: 5px;
+  }
+
+  .navbar-text
+  {
+    color:#ffffff !important;
+    font-weight: bold !important;
   }
   
 

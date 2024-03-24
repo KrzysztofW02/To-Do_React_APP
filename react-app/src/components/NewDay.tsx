@@ -39,8 +39,15 @@ function NewDayComponent({
 
   const handleAddTask = () => {
     if (task.trim() !== "") {
-      updateTasks([...tasks, task]);
+      const newTasks = [...tasks, task];
+      updateTasks(newTasks);
       setTask("");
+
+      // Zaktualizuj indeksy zaznaczonych zadań
+      const updatedSelectedItems = selectedItems.map(
+        (index) => index + tasks.length
+      );
+      setSelectedItems(updatedSelectedItems);
     }
   };
 
@@ -99,7 +106,7 @@ function NewDayComponent({
               onChange={handleInputChange}
               onKeyDown={handleKeyPress}
             />
-            <Button variant="primary" onClick={handleAddTask}>
+            <Button variant="outline-success" onClick={handleAddTask}>
               Add
             </Button>
           </div>
@@ -118,15 +125,15 @@ function NewDayComponent({
                 <div>
                   {!dailyTasks.includes(task) && (
                     <Button
-                      variant="warning"
+                      variant="outline-primary"
                       onClick={() => handleDailyTask(index)}
                     >
                       D
                     </Button>
                   )}
                   <Button
-                    variant="danger"
-                    onClick={() => onDeleteTask(index)} // Zmiana funkcji obsługującej usuwanie tasków
+                    variant="outline-danger"
+                    onClick={() => onDeleteTask(index)}
                   >
                     X
                   </Button>
@@ -160,7 +167,7 @@ function NewDayComponent({
           {tasks.length > 1 && (
             <Button
               className="clear-button"
-              variant="info"
+              variant="primary"
               onClick={handleClearTasks}
             >
               Clear

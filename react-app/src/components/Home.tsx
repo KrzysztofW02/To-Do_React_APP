@@ -51,7 +51,7 @@ function HomeComponent({
       <div className="menu">
         <div className="menu-header">
           {!showInput && (
-            <Button variant="primary" onClick={handleAddDay}>
+            <Button variant="outline-success" onClick={handleAddDay}>
               Add New Day
             </Button>
           )}
@@ -63,7 +63,7 @@ function HomeComponent({
                 placeholderText="Click here to select a date"
                 onKeyDown={handleKeyPress}
               />
-              <Button variant="primary" onClick={handleConfirmDay}>
+              <Button variant="outline-success" onClick={handleConfirmDay}>
                 Confirm
               </Button>
             </React.Fragment>
