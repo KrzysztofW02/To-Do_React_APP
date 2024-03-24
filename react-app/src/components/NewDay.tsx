@@ -70,6 +70,8 @@ function NewDayComponent({
   };
 
   const handleDailyTask = (index: number) => {
+    const updatedTasks = tasks.filter((_, i) => i !== index);
+    updateTasks(updatedTasks);
     const taskToMove = tasks[index];
     const isAlreadyDailyTask = dailyTasks.includes(taskToMove);
 
