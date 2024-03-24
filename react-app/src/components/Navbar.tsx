@@ -9,7 +9,7 @@ interface NavbarProps {
 
 function NavbarFunction({ onNavbarItemClick }: NavbarProps) {
   return (
-    <Navbar expand="lg" className="custom-navbar">
+    <Navbar expand="lg" className="custom-navbar sticky-top">
       <Container>
         <Navbar.Brand className="navbar-text" href="#home">
           To-Do App

@@ -1,7 +1,7 @@
-.custom-navbar {
-    
-    background: #2CBFA4
+  .custom-navbar {
+    background: #2CBFA4;
   }
+
 
   .grid-container {
     display: flex;
@@ -21,7 +21,7 @@
   }
   
   .menu-header {
-    display: flex;
+  display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
@@ -42,6 +42,8 @@
   align-items: center;
   padding: 10px;
   cursor: pointer;
+  border-radius: 8px;
+  margin-top: 2px;
   }
 
   
@@ -54,21 +56,22 @@
   }
   .menu-header .form-control {
   margin: 0 10px; 
+  }
+
+  .day-name{
+    text-align: center;
+    font-size: 30px;
+    margin-top: 100px;
+    color: #2CBFA4;
+    font-weight: bold;
+  }
+
+  .menu-item.selected {
+  outline: 2px solid #2CBFA4; 
+  outline-offset: -2px; 
 }
 
- .day-name{
-  text-align: center;
-  font-size: 30px;
-  margin-top: 100px;
-  color: #2CBFA4;
-  font-weight: bold;
- }
-
- .menu-item.selected {
-  background-color: #2CBFA4;
-}
-
-.menu .clear-button {
+  .menu .clear-button {
   margin-top: 10px;
   }
 

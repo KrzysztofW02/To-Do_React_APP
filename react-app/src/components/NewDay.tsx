@@ -1,4 +1,3 @@
-// newday.tsx
 import React, { useState, useEffect } from "react";
 import { Button, FormControl } from "react-bootstrap";
 import "./custom.css";
@@ -9,7 +8,7 @@ interface NewDayComponentProps {
   tasks: string[];
   onButtonClick: (dailyTasks: string[]) => void;
   updateTasks: (newTasks: string[]) => void;
-  onDeleteTask: (index: number) => void; // Nowa właściwość dla obsługi usuwania tasków
+  onDeleteTask: (index: number) => void;
 }
 
 function NewDayComponent({
@@ -18,7 +17,7 @@ function NewDayComponent({
   tasks,
   updateTasks,
   onButtonClick,
-  onDeleteTask, // Dodajemy onDeleteTask
+  onDeleteTask,
 }: NewDayComponentProps) {
   const [task, setTask] = useState<string>("");
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
@@ -27,11 +26,9 @@ function NewDayComponent({
     setSelectedItems([]);
   }, [tasks, dayName]);
 
-  // Dodajemy efekt, który będzie aktualizował dailyTasks po zmianie dnia
   useEffect(() => {
     setSelectedItems([]);
-    setTask(""); // Resetujemy pole dodawania taska po zmianie dnia
-    // Aktualizujemy listę dziennych zadań, jeśli istnieje dla bieżącego dnia
+    setTask("");
     if (dailyTasks && dailyTasks.length > 0) {
       onButtonClick(dailyTasks);
     }
@@ -43,7 +40,6 @@ function NewDayComponent({
       updateTasks(newTasks);
       setTask("");
 
-      // Zaktualizuj indeksy zaznaczonych zadań
       const updatedSelectedItems = selectedItems.map(
         (index) => index + tasks.length
       );
@@ -156,7 +152,7 @@ function NewDayComponent({
                 <div>
                   <Button
                     variant="danger"
-                    onClick={() => onDeleteTask(tasks.length + index)} // Poprawione przekazywanie indeksu
+                    onClick={() => onDeleteTask(tasks.length + index)}
                   >
                     X
                   </Button>
