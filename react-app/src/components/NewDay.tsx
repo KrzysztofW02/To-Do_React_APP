@@ -1,3 +1,4 @@
+// newday.tsx
 import React, { useState, useEffect } from "react";
 import { Button, FormControl } from "react-bootstrap";
 import "./custom.css";
@@ -8,6 +9,7 @@ interface NewDayComponentProps {
   tasks: string[];
   onButtonClick: (dailyTasks: string[]) => void;
   updateTasks: (newTasks: string[]) => void;
+  onDeleteTask: (index: number) => void; // Nowa właściwość dla obsługi usuwania tasków
 }
 
 function NewDayComponent({
@@ -16,6 +18,7 @@ function NewDayComponent({
   tasks,
   updateTasks,
   onButtonClick,
+  onDeleteTask, // Dodajemy onDeleteTask
 }: NewDayComponentProps) {
   const [task, setTask] = useState<string>("");
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
@@ -39,21 +42,6 @@ function NewDayComponent({
       updateTasks([...tasks, task]);
       setTask("");
     }
-  };
-
-  const handleDeleteTask = (index: number) => {
-    const taskToDelete = tasks[index];
-    const updatedTasks = tasks.filter((_, i) => i !== index);
-    updateTasks(updatedTasks);
-
-    const updatedSelectedItems = selectedItems.filter((item) => item !== index);
-    setSelectedItems(updatedSelectedItems);
-
-    // Usuń zadanie z listy dziennych zadań dla całej aplikacji
-    const updatedDailyTasks = dailyTasks.filter(
-      (task) => task !== taskToDelete
-    );
-    onButtonClick(updatedDailyTasks);
   };
 
   const handleMenuClick = (index: number) => {
@@ -82,7 +70,7 @@ function NewDayComponent({
   };
 
   const handleClearTasks = () => {
-    const updatedTasks = tasks.filter((task) => !dailyTasks.includes(task));
+    const updatedTasks = tasks.filter((task) => dailyTasks.includes(task));
     updateTasks(updatedTasks);
     setSelectedItems([]);
   };
@@ -138,7 +126,7 @@ function NewDayComponent({
                   )}
                   <Button
                     variant="danger"
-                    onClick={() => handleDeleteTask(index)}
+                    onClick={() => onDeleteTask(index)} // Zmiana funkcji obsługującej usuwanie tasków
                   >
                     X
                   </Button>
@@ -161,7 +149,7 @@ function NewDayComponent({
                 <div>
                   <Button
                     variant="danger"
-                    onClick={() => handleDeleteTask(index)}
+                    onClick={() => onDeleteTask(tasks.length + index)} // Poprawione przekazywanie indeksu
                   >
                     X
                   </Button>
