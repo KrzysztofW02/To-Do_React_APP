@@ -39,6 +39,12 @@ function HomeComponent({
     onMenuClick(dayName, dailyTasks);
   };
 
+  const handleDeleteDay = (dayName: string) => {
+    console.log("Usunieto element menu:", dayName);
+    const { [dayName]: deletedDay, ...updateDays } = days;
+    setDays(updateDays);
+  };
+
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       handleConfirmDay();
@@ -76,6 +82,15 @@ function HomeComponent({
               onClick={() => handleMenuClick(day)}
             >
               {day}
+              <Button
+                variant="outline-danger"
+                onClick={(e) => {
+                  e.stopPropagation(); //To avoid entering day when u click on button
+                  handleDeleteDay(day);
+                }}
+              >
+                X
+              </Button>
             </div>
           ))}
         </div>
