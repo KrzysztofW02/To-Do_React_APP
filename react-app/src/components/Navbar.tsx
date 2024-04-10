@@ -1,7 +1,7 @@
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import "./custom.css";
+import "../custom.css";
 
 interface NavbarProps {
   onNavbarItemClick: (component: "Home" | "NewDay") => void;

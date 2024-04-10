@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, FormControl } from "react-bootstrap";
-import "./custom.css";
+import "../custom.css";
 
 interface NewDayComponentProps {
   dayName: string;
