@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import NavbarFunction from "./components/Navbar";
-import NewDayComponent from "./pages/NewDay";
-import HomeComponent from "./pages/Home";
+import NewDayComponent from "./pages/NewDay/NewDay";
+import HomeComponent from "./pages/Home/Home";
 
 function App() {
   const [displayedComponent, setDisplayedComponent] = useState<

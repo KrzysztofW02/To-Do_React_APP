@@ -1,6 +1,8 @@
+// NewDay.tsx
 import React, { useState, useEffect } from "react";
 import { Button, FormControl } from "react-bootstrap";
-import "../custom.css";
+import Task from "./Task";
+import "../../custom.css";
 
 interface NewDayComponentProps {
   dayName: string;
@@ -11,14 +13,14 @@ interface NewDayComponentProps {
   onDeleteTask: (index: number) => void;
 }
 
-function NewDayComponent({
+const NewDayComponent: React.FC<NewDayComponentProps> = ({
   dayName,
   dailyTasks,
   tasks,
   updateTasks,
   onButtonClick,
   onDeleteTask,
-}: NewDayComponentProps) {
+}) => {
   const [task, setTask] = useState<string>("");
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
@@ -108,56 +110,26 @@ function NewDayComponent({
           </div>
           <div className="menu-items">
             {tasks.map((task, index) => (
-              <div
-                onClick={() => handleMenuClick(index)}
-                className={
-                  "menu-item" +
-                  (selectedItems.includes(index) ? " selected" : "") +
-                  (dailyTasks.includes(task) ? " daily-task" : "")
-                }
-                key={index}
-              >
-                <span>{task}</span>
-                <div>
-                  {!dailyTasks.includes(task) && (
-                    <Button
-                      variant="outline-primary"
-                      onClick={() => handleDailyTask(index)}
-                    >
-                      D
-                    </Button>
-                  )}
-                  <Button
-                    variant="outline-danger"
-                    onClick={() => onDeleteTask(index)}
-                  >
-                    X
-                  </Button>
-                </div>
-              </div>
+              <Task
+                task={task}
+                index={index}
+                isSelected={selectedItems.includes(index)}
+                isDaily={dailyTasks.includes(task)}
+                onDailyTask={handleDailyTask}
+                onDeleteTask={onDeleteTask}
+                onMenuClick={handleMenuClick}
+              />
             ))}
             {dailyTasks.map((task, index) => (
-              <div
-                onClick={() => handleMenuClick(tasks.length + index)}
-                className={
-                  "menu-item" +
-                  (selectedItems.includes(tasks.length + index)
-                    ? " selected"
-                    : "") +
-                  " daily-task"
-                }
-                key={index}
-              >
-                <span>{task}</span>
-                <div>
-                  <Button
-                    variant="danger"
-                    onClick={() => onDeleteTask(tasks.length + index)}
-                  >
-                    X
-                  </Button>
-                </div>
-              </div>
+              <Task
+                task={task}
+                index={tasks.length + index}
+                isSelected={selectedItems.includes(tasks.length + index)}
+                isDaily={true}
+                onDailyTask={handleDailyTask}
+                onDeleteTask={onDeleteTask}
+                onMenuClick={handleMenuClick}
+              />
             ))}
           </div>
           {tasks.length > 1 && (
@@ -173,6 +145,6 @@ function NewDayComponent({
       </div>
     </>
   );
-}
+};
 
 export default NewDayComponent;
