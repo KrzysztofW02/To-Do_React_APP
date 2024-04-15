@@ -6,7 +6,7 @@ interface TaskProps {
   index: number;
   isSelected: boolean;
   isDaily: boolean;
-  onDailyTask: (index: number) => void;
+  onDailyTask: (event: React.MouseEvent, index: number) => void;
   onDeleteTask: (index: number) => void;
   onMenuClick: (index: number) => void;
 }
@@ -31,7 +31,10 @@ const Task: React.FC<TaskProps> = ({
     <span>{task}</span>
     <div>
       {!isDaily && (
-        <Button variant="outline-primary" onClick={() => onDailyTask(index)}>
+        <Button
+          variant="outline-primary"
+          onClick={(event) => onDailyTask(event, index)}
+        >
           D
         </Button>
       )}

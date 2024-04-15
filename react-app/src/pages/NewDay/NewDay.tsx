@@ -1,4 +1,3 @@
-// NewDay.tsx
 import React, { useState, useEffect } from "react";
 import { Button, FormControl } from "react-bootstrap";
 import Task from "./Task";
@@ -25,11 +24,6 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
   useEffect(() => {
-    setSelectedItems([]);
-  }, [tasks, dayName]);
-
-  useEffect(() => {
-    setSelectedItems([]);
     setTask("");
     if (dailyTasks && dailyTasks.length > 0) {
       onButtonClick(dailyTasks);
@@ -41,11 +35,6 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
       const newTasks = [...tasks, task];
       updateTasks(newTasks);
       setTask("");
-
-      const updatedSelectedItems = selectedItems.map(
-        (index) => index + tasks.length
-      );
-      setSelectedItems(updatedSelectedItems);
     }
   };
 
@@ -62,7 +51,8 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
     }
   };
 
-  const handleDailyTask = (index: number) => {
+  const handleDailyTask = (event: React.MouseEvent, index: number) => {
+    event.stopPropagation();
     const updatedTasks = tasks.filter((_, i) => i !== index);
     updateTasks(updatedTasks);
     const taskToMove = tasks[index];
@@ -115,7 +105,7 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
                 index={index}
                 isSelected={selectedItems.includes(index)}
                 isDaily={dailyTasks.includes(task)}
-                onDailyTask={handleDailyTask}
+                onDailyTask={(event) => handleDailyTask(event, index)}
                 onDeleteTask={onDeleteTask}
                 onMenuClick={handleMenuClick}
               />
@@ -126,7 +116,7 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
                 index={tasks.length + index}
                 isSelected={selectedItems.includes(tasks.length + index)}
                 isDaily={true}
-                onDailyTask={handleDailyTask}
+                onDailyTask={(event) => handleDailyTask(event, index)}
                 onDeleteTask={onDeleteTask}
                 onMenuClick={handleMenuClick}
               />
