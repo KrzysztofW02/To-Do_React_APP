@@ -45,6 +45,10 @@ function HomeComponent({
     setDays(updateDays);
   };
 
+  const handleClearAllDays = () => {
+    setDays({});
+  };
+
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       handleConfirmDay();
@@ -93,6 +97,15 @@ function HomeComponent({
               </Button>
             </div>
           ))}
+          {Object.keys(days).length > 1 && (
+            <Button
+              variant="outline-danger"
+              onClick={handleClearAllDays}
+              style={{ marginTop: "10px" }}
+            >
+              Clear All Days
+            </Button>
+          )}
         </div>
       </div>
     </div>
