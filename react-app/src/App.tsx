@@ -1,81 +1,70 @@
-import React, { useState } from "react";
+import React from "react";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import {
+  store,
+  setDisplayedComponent,
+  setDayName,
+  setDays,
+  setDailyTasks,
+  updateTasksForDay,
+  deleteTask,
+  RootState,
+} from "./store";
 import NavbarFunction from "./components/Navbar";
 import NewDayComponent from "./pages/NewDay/NewDay";
 import HomeComponent from "./pages/Home/Home";
 
 function App() {
-  const [displayedComponent, setDisplayedComponent] = useState<
-    "Home" | "NewDay"
-  >("Home");
-  const [dayName, setDayName] = useState<string>("");
-  const [days, setDays] = useState<Record<string, string[]>>({});
-  const [dailyTasks, setDailyTasks] = useState<string[]>([]);
+  return (
+    <Provider store={store}>
+      <AppContent />
+    </Provider>
+  );
+}
+
+function AppContent() {
+  const dispatch = useDispatch();
+  const displayedComponent = useSelector(
+    (state: RootState) => state.displayedComponent
+  );
+  const dayName = useSelector((state: RootState) => state.dayName);
+  const days = useSelector((state: RootState) => state.days);
+  const dailyTasks = useSelector((state: RootState) => state.dailyTasks);
 
   const handleNavbarItemClick = (component: "Home" | "NewDay") => {
-    setDisplayedComponent(component);
+    dispatch(setDisplayedComponent(component));
   };
 
   const handleMenuItemClick = (dayName: string) => {
     console.log("Kliknięto element menu:", dayName);
-    setDayName(dayName);
-    setDisplayedComponent("NewDay");
-  };
-
-  const handleDeleteTask = (index: number) => {
-    const updatedTasks = (days[dayName] || []).filter((_, i) => i !== index);
-    setDays((prevDays) => ({
-      ...prevDays,
-      [dayName]: updatedTasks,
-    }));
-
-    const taskToDelete = (days[dayName] || [])[index];
-
-    const updatedDailyTasks = dailyTasks.filter((task) => task == taskToDelete);
-    setDailyTasks(updatedDailyTasks);
-  };
-
-  const handleDailyButtonClick = (dailyTask: string[]) => {
-    console.log("Zapisano task jako daily", dailyTask);
-    setDailyTasks((prevDailyTasks) => [
-      ...prevDailyTasks,
-      ...dailyTask.filter((task) => !prevDailyTasks.includes(task)),
-    ]);
-    setDisplayedComponent("NewDay");
-  };
-
-  const updateTasksForDay = (dayName: string, newTasks: string[]) => {
-    setDays((prevDays) => ({
-      ...prevDays,
-      [dayName]: newTasks,
-    }));
+    dispatch(setDayName(dayName));
+    dispatch(setDisplayedComponent("NewDay"));
   };
 
   return (
-    <>
-      <div>
-        <NavbarFunction onNavbarItemClick={handleNavbarItemClick} />
-      </div>
-      <div>
-        {displayedComponent === "Home" && (
-          <HomeComponent
-            onMenuClick={handleMenuItemClick}
-            days={days}
-            setDays={setDays}
-            dailyTasks={dailyTasks}
-          />
-        )}
-        {displayedComponent === "NewDay" && (
-          <NewDayComponent
-            dailyTasks={dailyTasks}
-            onButtonClick={handleDailyButtonClick}
-            dayName={dayName}
-            tasks={days[dayName] || []}
-            updateTasks={(newTasks) => updateTasksForDay(dayName, newTasks)}
-            onDeleteTask={handleDeleteTask}
-          />
-        )}
-      </div>
-    </>
+    <div>
+      <NavbarFunction onNavbarItemClick={handleNavbarItemClick} />
+      {displayedComponent === "Home" && (
+        <HomeComponent
+          onMenuClick={handleMenuItemClick}
+          days={days}
+          setDays={(newDays) => dispatch(setDays(newDays))}
+          dailyTasks={dailyTasks}
+        />
+      )}
+      {displayedComponent === "NewDay" && (
+        <NewDayComponent
+          dayName={dayName}
+          dailyTasks={dailyTasks}
+          onButtonClick={(dailyTasks) => dispatch(setDailyTasks(dailyTasks))}
+          tasks={days[dayName] || []}
+          updateTasks={(newTasks) =>
+            dispatch(updateTasksForDay(dayName, newTasks))
+          }
+          onDeleteTask={(index) => dispatch(deleteTask(index))}
+        />
+      )}
+    </div>
   );
 }
 

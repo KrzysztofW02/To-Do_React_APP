@@ -6,7 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 interface HomeComponentProps {
   onMenuClick: (dayName: string, dailyTasks: string[]) => void;
   days: Record<string, string[]>;
-  setDays: React.Dispatch<React.SetStateAction<Record<string, string[]>>>;
+  setDays: (newDays: Record<string, string[]>) => void;
   dailyTasks: string[];
 }
 
