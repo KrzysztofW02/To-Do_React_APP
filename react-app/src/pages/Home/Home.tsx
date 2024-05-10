@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import axios from "axios";
 
 interface HomeComponentProps {
   onMenuClick: (dayName: string, dailyTasks: string[]) => void;
@@ -19,6 +20,22 @@ function HomeComponent({
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [showInput, setShowInput] = useState<boolean>(false);
 
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/days")
+      .then((response) => {
+        const fetchedDays = response.data;
+        const transformedDays: Record<string, string[]> = {};
+        for (const dayObj of fetchedDays) {
+          transformedDays[dayObj.day] = [];
+        }
+        setDays(transformedDays);
+      })
+      .catch((error) => {
+        console.error("Error fetching days:", error);
+      });
+  }, []);
+
   const handleAddDay = () => {
     setShowInput(true);
   };
@@ -32,6 +49,13 @@ function HomeComponent({
       });
       setStartDate(null);
       setShowInput(false);
+
+      axios
+        .post("http://localhost:5000/days", {
+          day: formattedDate,
+        })
+        .then((response) => console.log(response.data))
+        .catch((error) => console.error("Error:", error));
     }
   };
 
@@ -43,10 +67,20 @@ function HomeComponent({
     console.log("Usunieto element menu:", dayName);
     const { [dayName]: deletedDay, ...updateDays } = days;
     setDays(updateDays);
+
+    axios
+      .delete(`http://localhost:5000/days/${dayName}`)
+      .then((response) => console.log(response.data))
+      .catch((error) => console.error("Error:", error));
   };
 
   const handleClearAllDays = () => {
     setDays({});
+
+    axios
+      .delete("http://localhost:5000/days")
+      .then((response) => console.log(response.data))
+      .catch((error) => console.error("Error:", error));
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
