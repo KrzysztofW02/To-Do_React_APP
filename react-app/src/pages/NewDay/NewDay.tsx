@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, FormControl } from "react-bootstrap";
 import Task from "./Task";
 import "../../custom.css";
+import axios from "axios";
 
 interface NewDayComponentProps {
   dayName: string;
@@ -30,10 +31,55 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
     }
   }, [dayName]);
 
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/days/" + dayName
+        );
+        const taskNames = response.data.tasks.map(
+          (task: { name: string }) => task.name
+        );
+        updateTasks(taskNames);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchTasks();
+  }, [dayName]);
+
+  const saveTask = async (
+    task: string,
+    isDaily: boolean,
+    isSelected: boolean
+  ) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/days/" + dayName + "/tasks",
+        {
+          task: {
+            name: task,
+            isDaily: isDaily,
+            isSelected: isSelected,
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleAddTask = () => {
     if (task.trim() !== "") {
       const newTasks = [...tasks, task];
       updateTasks(newTasks);
+      saveTask(
+        task,
+        dailyTasks.includes(task),
+        selectedItems.includes(tasks.length)
+      );
       setTask("");
     }
   };
@@ -101,6 +147,7 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
           <div className="menu-items">
             {tasks.map((task, index) => (
               <Task
+                key={index}
                 task={task}
                 index={index}
                 isSelected={selectedItems.includes(index)}

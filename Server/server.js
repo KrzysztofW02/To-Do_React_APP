@@ -4,31 +4,64 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json()); 
 
 let db;
 
 const connectDB = async () => {
     const client = await mongodb.MongoClient.connect('mongodb://localhost:27017');
     db = client.db('To-Do-DB');
-  };
+};
 connectDB();
-
-app.get('/tasks', async (req, res) => {
-  const tasks = await db.collection('Tasks').find({}).toArray();
-  res.send(tasks);
-});
 
 app.get('/days', async (req, res) => {
     const days = await db.collection('Days').find({}).toArray();
     res.send(days);
-  });
+});
+
+app.get('/days/:day', async (req, res) => {
+    const day = req.params.day;
+    console.log(day)
+    const dayData = await db.collection('Days').findOne({ day: day });
+    if (dayData) {
+      res.send(dayData);
+    } else {
+      res.status(404).send({ message: 'Day not found' });
+    }
+});
 
 app.post('/days', async (req, res) => {
-    const newDay = req.body;
-    const result = await db.collection('Days').insertOne(newDay);
-    res.send(result);
-});
+    const day = req.body.day;
+  
+    const existingDay = await db.collection('Days').findOne({ day: day });
+  
+    if (!existingDay) {
+      const result = await db.collection('Days').insertOne({ day: day, tasks: [] });
+      res.send(result);
+    } else {
+      
+      res.status(400).send({ error: 'Day already exists' });
+    }
+  });
+  
+  app.post('/days/:day/tasks', async (req, res) => {
+    const day = req.params.day;
+    const newTask = req.body.task;
+  
+    const existingDay = await db.collection('Days').findOne({ day: day });
+  
+    if (existingDay) {
+      const existingTasks = Array.isArray(existingDay.tasks) ? existingDay.tasks : [];
+      const updatedTasks = [...existingTasks, newTask];
+      const result = await db.collection('Days').updateOne(
+        { day: day },
+        { $set: { tasks: updatedTasks } }
+      );
+      res.send(result);
+    } else {
+      res.status(400).send({ error: 'Day does not exist' });
+    }
+  });
 
 app.delete('/days', async (req, res) => {
     try {
@@ -49,6 +82,7 @@ app.delete('/days/:day', async (req, res) => {
         res.send(result);
     }
 });
+
 
 
 app.listen(5000, () => console.log('Server is running on port 5000'));

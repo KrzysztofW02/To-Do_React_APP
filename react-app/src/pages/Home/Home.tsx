@@ -42,7 +42,14 @@ function HomeComponent({
 
   const handleConfirmDay = () => {
     if (startDate) {
-      const formattedDate = startDate.toLocaleDateString();
+      const day = startDate.getDate();
+      const month = startDate.getMonth() + 1;
+      const year = startDate.getFullYear();
+
+      const formattedDate = `${day < 10 ? "0" + day : day}-${
+        month < 10 ? "0" + month : month
+      }-${year}`;
+
       setDays({
         ...days,
         [formattedDate]: [],
@@ -61,6 +68,14 @@ function HomeComponent({
 
   const handleMenuClick = (dayName: string) => {
     onMenuClick(dayName, dailyTasks);
+
+    axios
+      .get(`http://localhost:5000/days/${dayName}`)
+      .then((response) => {
+        console.log(response.data);
+        // Here you can handle the data for the specific day
+      })
+      .catch((error) => console.error("Error:", error));
   };
 
   const handleDeleteDay = (dayName: string) => {
@@ -105,6 +120,7 @@ function HomeComponent({
                 onChange={(date: Date | null) => setStartDate(date)}
                 placeholderText="Click here to select a date"
                 onKeyDown={handleKeyPress}
+                dateFormat="dd-MM-yyyy"
               />
               <Button variant="outline-success" onClick={handleConfirmDay}>
                 Confirm
