@@ -3,6 +3,9 @@ import { Button, FormControl } from "react-bootstrap";
 import Task from "./Task";
 import "../../custom.css";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+
+import { setDailyTasks } from "../../store";
 
 interface NewDayComponentProps {
   dayName: string;
@@ -31,16 +34,23 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
     }
   }, [dayName]);
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         const response = await axios.get(
           "http://localhost:5000/days/" + dayName
         );
-        const taskNames = response.data.tasks.map(
-          (task: { name: string }) => task.name
-        );
+        const taskNames = response.data.tasks
+          .filter((task: { isDaily: boolean }) => !task.isDaily)
+          .map((task: { name: string }) => task.name);
+        const dailyTaskNames = response.data.tasks
+          .filter((task: { isDaily: boolean }) => task.isDaily)
+          .map((task: { name: string }) => task.name);
         updateTasks(taskNames);
+        dispatch(setDailyTasks([]));
+        onButtonClick(dailyTaskNames);
       } catch (error) {
         console.error(error);
       }
@@ -97,7 +107,7 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
     }
   };
 
-  const handleDailyTask = (event: React.MouseEvent, index: number) => {
+  const handleDailyTask = async (event: React.MouseEvent, index: number) => {
     event.stopPropagation();
     const updatedTasks = tasks.filter((_, i) => i !== index);
     updateTasks(updatedTasks);
@@ -107,6 +117,19 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
     if (!isAlreadyDailyTask) {
       const updatedDailyTasks = [...dailyTasks, taskToMove];
       onButtonClick(updatedDailyTasks);
+
+      // Update the task in the database
+      try {
+        const response = await axios.put(
+          `http://localhost:5000/days/${dayName}/tasks/${taskToMove}`,
+          {
+            isDaily: true,
+          }
+        );
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -159,6 +182,7 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
             ))}
             {dailyTasks.map((task, index) => (
               <Task
+                key={index}
                 task={task}
                 index={tasks.length + index}
                 isSelected={selectedItems.includes(tasks.length + index)}

@@ -83,6 +83,31 @@ app.delete('/days/:day', async (req, res) => {
     }
 });
 
+app.put('/days/:day/tasks/:task', async (req, res) => {
+  const day = req.params.day;
+  const taskName = req.params.task;
+  const { isDaily } = req.body;
+
+  const existingDay = await db.collection('Days').findOne({ day: day });
+
+  if (existingDay) {
+    const existingTasks = Array.isArray(existingDay.tasks) ? existingDay.tasks : [];
+    const updatedTasks = existingTasks.map(task => {
+      if (task.name === taskName) {
+        return { ...task, isDaily: isDaily };
+      }
+      return task;
+    });
+    const result = await db.collection('Days').updateOne(
+      { day: day },
+      { $set: { tasks: updatedTasks } }
+    );
+    res.send(result);
+  } else {
+    res.status(400).send({ error: 'Day does not exist' });
+  }
+});
+
 
 
 app.listen(5000, () => console.log('Server is running on port 5000'));
