@@ -48,9 +48,15 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
         const dailyTaskNames = response.data.tasks
           .filter((task: { isDaily: boolean }) => task.isDaily)
           .map((task: { name: string }) => task.name);
+        const selectedTaskIndices = response.data.tasks
+          .map((task: { isSelected: boolean }, index: number) =>
+            task.isSelected ? index : -1
+          )
+          .filter((index: number) => index !== -1);
         updateTasks(taskNames);
         dispatch(setDailyTasks([]));
         onButtonClick(dailyTaskNames);
+        setSelectedItems(selectedTaskIndices);
       } catch (error) {
         console.error(error);
       }
@@ -58,6 +64,28 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
 
     fetchTasks();
   }, [dayName]);
+
+  onDeleteTask = (index: number) => {
+    let taskToDelete;
+    let newTasks;
+    if (index < tasks.length) {
+      taskToDelete = tasks[index];
+      newTasks = [...tasks];
+      newTasks.splice(index, 1);
+      updateTasks(newTasks);
+    } else {
+      const dailyIndex = index - tasks.length;
+      taskToDelete = dailyTasks[dailyIndex];
+      const newDailyTasks = [...dailyTasks];
+      newDailyTasks.splice(dailyIndex, 1);
+      onButtonClick(newDailyTasks);
+    }
+
+    axios
+      .delete(`http://localhost:5000/days/${dayName}/tasks/${taskToDelete}`)
+      .then((response) => console.log(response.data))
+      .catch((error) => console.error("Error:", error));
+  };
 
   const saveTask = async (
     task: string,
@@ -94,7 +122,7 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
     }
   };
 
-  const handleMenuClick = (index: number) => {
+  const handleMenuClick = async (index: number) => {
     const isSelected = selectedItems.includes(index);
 
     if (!isSelected) {
@@ -104,6 +132,19 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
         (item) => item !== index
       );
       setSelectedItems(updatedSelectedItems);
+    }
+
+    try {
+      const taskToUpdate = tasks[index];
+      const response = await axios.put(
+        `http://localhost:5000/days/${dayName}/tasks/${taskToUpdate}`,
+        {
+          isSelected: !isSelected,
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -118,7 +159,6 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
       const updatedDailyTasks = [...dailyTasks, taskToMove];
       onButtonClick(updatedDailyTasks);
 
-      // Update the task in the database
       try {
         const response = await axios.put(
           `http://localhost:5000/days/${dayName}/tasks/${taskToMove}`,

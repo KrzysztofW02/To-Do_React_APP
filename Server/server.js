@@ -86,7 +86,7 @@ app.delete('/days/:day', async (req, res) => {
 app.put('/days/:day/tasks/:task', async (req, res) => {
   const day = req.params.day;
   const taskName = req.params.task;
-  const { isDaily } = req.body;
+  const { isDaily, isSelected } = req.body;
 
   const existingDay = await db.collection('Days').findOne({ day: day });
 
@@ -94,7 +94,7 @@ app.put('/days/:day/tasks/:task', async (req, res) => {
     const existingTasks = Array.isArray(existingDay.tasks) ? existingDay.tasks : [];
     const updatedTasks = existingTasks.map(task => {
       if (task.name === taskName) {
-        return { ...task, isDaily: isDaily };
+        return { ...task, isDaily: isDaily, isSelected: isSelected };
       }
       return task;
     });
@@ -105,6 +105,58 @@ app.put('/days/:day/tasks/:task', async (req, res) => {
     res.send(result);
   } else {
     res.status(400).send({ error: 'Day does not exist' });
+  }
+});
+
+app.delete('/days/:day/tasks/:task', async (req, res) => {
+  const day = req.params.day;
+  const taskName = req.params.task;
+  console.log('day:', day);
+  console.log('taskName:', taskName);
+
+  const existingDay = await db.collection('Days').findOne({ day: day });
+  console.log('existingDay:', existingDay);
+
+  if (existingDay) {
+    const existingTasks = Array.isArray(existingDay.tasks) ? existingDay.tasks : [];
+    const updatedTasks = existingTasks.filter(task => task.name !== taskName);
+    console.log('updatedTasks:', updatedTasks);
+
+    const result = await db.collection('Days').updateOne(
+      { day: day },
+      { $set: { tasks: updatedTasks } }
+    );
+    res.send(result);
+  } else {
+    res.status(400).send({ error: 'Day does not exist' });
+  }
+});
+
+app.get('/days/:day/tasks', async (req, res) => {
+  const day = req.params.day;
+  const existingDay = await db.collection('Days').findOne({ day: day });
+
+  if (existingDay) {
+    res.send(existingDay.tasks);
+  } else {
+    res.status(404).send({ error: 'Day not found' });
+  }
+});
+
+app.get('/days/:day/tasks/:task', async (req, res) => {
+  const day = req.params.day;
+  const taskName = req.params.task;
+  const existingDay = await db.collection('Days').findOne({ day: day });
+
+  if (existingDay) {
+    const task = existingDay.tasks.find(task => task.name === taskName);
+    if (task) {
+      res.send(task);
+    } else {
+      res.status(404).send({ error: 'Task not found' });
+    }
+  } else {
+    res.status(404).send({ error: 'Day not found' });
   }
 });
 

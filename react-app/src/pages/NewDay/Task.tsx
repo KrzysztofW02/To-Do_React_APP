@@ -33,12 +33,21 @@ const Task: React.FC<TaskProps> = ({
       {!isDaily && (
         <Button
           variant="outline-primary"
-          onClick={(event) => onDailyTask(event, index)}
+          onClick={(event) => {
+            event.stopPropagation();
+            onDailyTask(event, index);
+          }}
         >
           D
         </Button>
       )}
-      <Button variant="outline-danger" onClick={() => onDeleteTask(index)}>
+      <Button
+        variant="outline-danger"
+        onClick={(event) => {
+          event.stopPropagation();
+          onDeleteTask(index);
+        }}
+      >
         X
       </Button>
     </div>
