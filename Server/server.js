@@ -14,12 +14,12 @@ const connectDB = async () => {
 };
 connectDB();
 
-app.get('/days', async (req, res) => {
+app.get('/days', async (req, res) => { //Wyswietlanie dni
     const days = await db.collection('Days').find({}).toArray();
     res.send(days);
 });
 
-app.get('/days/:day', async (req, res) => {
+app.get('/days/:day', async (req, res) => { //Wyswietlanie taskow w konkretnym dniu
     const day = req.params.day;
     console.log(day)
     const dayData = await db.collection('Days').findOne({ day: day });
@@ -30,7 +30,7 @@ app.get('/days/:day', async (req, res) => {
     }
 });
 
-app.post('/days', async (req, res) => {
+app.post('/days', async (req, res) => { //Dodawanie dni
     const day = req.body.day;
   
     const existingDay = await db.collection('Days').findOne({ day: day });
@@ -44,7 +44,7 @@ app.post('/days', async (req, res) => {
     }
   });
   
-  app.post('/days/:day/tasks', async (req, res) => {
+  app.post('/days/:day/tasks', async (req, res) => { //Dodawanie taskow do poszczegolnych dni
     const day = req.params.day;
     const newTask = req.body.task;
   
@@ -63,7 +63,7 @@ app.post('/days', async (req, res) => {
     }
   });
 
-app.delete('/days', async (req, res) => {
+app.delete('/days', async (req, res) => { //Usuwanie wszystkich dni
     try {
         const result = await db.collection('Days').deleteMany({});
         res.status(200).send(result);
@@ -73,7 +73,7 @@ app.delete('/days', async (req, res) => {
     }
 });
 
-app.delete('/days/:day', async (req, res) => {
+app.delete('/days/:day', async (req, res) => { //Usuwanie konkretnego dnia
     const day = req.params.day;
     const result = await db.collection('Days').deleteOne({ day: day });
     if (result.deletedCount === 0) {
@@ -83,7 +83,7 @@ app.delete('/days/:day', async (req, res) => {
     }
 });
 
-app.put('/days/:day/tasks/:task', async (req, res) => {
+app.put('/days/:day/tasks/:task', async (req, res) => { //Edycja taskow
   const day = req.params.day;
   const taskName = req.params.task;
   const { isDaily, isSelected } = req.body;
@@ -108,7 +108,7 @@ app.put('/days/:day/tasks/:task', async (req, res) => {
   }
 });
 
-app.delete('/days/:day/tasks/:task', async (req, res) => {
+app.delete('/days/:day/tasks/:task', async (req, res) => { //Usuwanie konkretnego taska
   const day = req.params.day;
   const taskName = req.params.task;
   console.log('day:', day);
@@ -132,7 +132,7 @@ app.delete('/days/:day/tasks/:task', async (req, res) => {
   }
 });
 
-app.get('/days/:day/tasks', async (req, res) => {
+app.get('/days/:day/tasks', async (req, res) => { //Wuswietlanie taskow w konkretnym dniu
   const day = req.params.day;
   const existingDay = await db.collection('Days').findOne({ day: day });
 
@@ -143,7 +143,7 @@ app.get('/days/:day/tasks', async (req, res) => {
   }
 });
 
-app.get('/days/:day/tasks/:task', async (req, res) => {
+app.get('/days/:day/tasks/:task', async (req, res) => { //Wyswietlanie konkretnego taska
   const day = req.params.day;
   const taskName = req.params.task;
   const existingDay = await db.collection('Days').findOne({ day: day });
@@ -160,6 +160,27 @@ app.get('/days/:day/tasks/:task', async (req, res) => {
   }
 });
 
+app.post('/dailytasks', async (req, res) => {
+  const newTaskName = req.body.name;
 
+  if (!newTaskName) {
+    return res.status(400).send({ error: 'Task name is missing' });
+  }
+
+  const existingTask = await db.collection('DailyTasks').findOne({ name: newTaskName });
+
+  if (existingTask) {
+    return res.status(400).send({ error: 'Task already exists in daily tasks' });
+  }
+
+  // If the task name is provided and it doesn't exist in the database, insert it
+  const result = await db.collection('DailyTasks').insertOne({ name: newTaskName });
+  res.send(result);
+});
+
+app.get('/dailytasks', async (req, res) => {
+  const dailyTasks = await db.collection('DailyTasks').find({}).toArray();
+  res.send(dailyTasks);
+});
 
 app.listen(5000, () => console.log('Server is running on port 5000'));

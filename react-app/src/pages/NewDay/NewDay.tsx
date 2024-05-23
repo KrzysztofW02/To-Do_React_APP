@@ -167,6 +167,12 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
           }
         );
         console.log(response.data);
+
+        const responseDailyTask = await axios.post(
+          `http://localhost:5000/dailytasks`,
+          { name: taskToMove }
+        );
+        console.log(responseDailyTask.data);
       } catch (error) {
         console.error(error);
       }
