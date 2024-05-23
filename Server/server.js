@@ -160,7 +160,7 @@ app.get('/days/:day/tasks/:task', async (req, res) => { //Wyswietlanie konkretne
   }
 });
 
-app.post('/dailytasks', async (req, res) => {
+app.post('/dailytasks', async (req, res) => { //Dodawanie daily taskow
   const newTaskName = req.body.name;
 
   if (!newTaskName) {
@@ -173,7 +173,6 @@ app.post('/dailytasks', async (req, res) => {
     return res.status(400).send({ error: 'Task already exists in daily tasks' });
   }
 
-  // If the task name is provided and it doesn't exist in the database, insert it
   const result = await db.collection('DailyTasks').insertOne({ name: newTaskName });
   res.send(result);
 });
@@ -184,3 +183,28 @@ app.get('/dailytasks', async (req, res) => {
 });
 
 app.listen(5000, () => console.log('Server is running on port 5000'));
+
+app.delete('/dailytasks/:task', async (req, res) => { //Usuwanie daily taskow
+  const taskName = req.params.task;
+
+  const existingTask = await db.collection('DailyTasks').findOne({ name: taskName });
+
+  if (existingTask) {
+    const result = await db.collection('DailyTasks').deleteOne({ name: taskName });
+    res.send(result);
+  } else {
+    res.status(400).send({ error: 'Task does not exist in daily tasks' });
+  }
+});
+
+app.get('/dailytasks/:task', async (req, res) => { //Wyswietlanie konkretnego daily taska
+  const taskName = req.params.task;
+  const existingTask = await db.collection('DailyTasks').findOne({ name: taskName });
+
+  if (existingTask) {
+    res.send(existingTask);
+  } else {
+    res.status(404).send({ error: 'Task not found in daily tasks' });
+  }
+});
+

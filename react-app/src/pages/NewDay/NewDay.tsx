@@ -45,9 +45,6 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
         const taskNames = response.data.tasks
           .filter((task: { isDaily: boolean }) => !task.isDaily)
           .map((task: { name: string }) => task.name);
-        const dailyTaskNames = response.data.tasks
-          .filter((task: { isDaily: boolean }) => task.isDaily)
-          .map((task: { name: string }) => task.name);
         const selectedTaskIndices = response.data.tasks
           .map((task: { isSelected: boolean }, index: number) =>
             task.isSelected ? index : -1
@@ -55,6 +52,15 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
           .filter((index: number) => index !== -1);
         updateTasks(taskNames);
         dispatch(setDailyTasks([]));
+
+        // Fetch daily tasks from the DailyTasks collection
+        const dailyTasksResponse = await axios.get(
+          "http://localhost:5000/dailytasks"
+        );
+        const dailyTaskNames = dailyTasksResponse.data.map(
+          (task: { name: string }) => task.name
+        );
+
         onButtonClick(dailyTaskNames);
         setSelectedItems(selectedTaskIndices);
       } catch (error) {
@@ -73,18 +79,21 @@ const NewDayComponent: React.FC<NewDayComponentProps> = ({
       newTasks = [...tasks];
       newTasks.splice(index, 1);
       updateTasks(newTasks);
+      axios
+        .delete(`http://localhost:5000/days/${dayName}/tasks/${taskToDelete}`)
+        .then((response) => console.log(response.data))
+        .catch((error) => console.error("Error:", error));
     } else {
       const dailyIndex = index - tasks.length;
       taskToDelete = dailyTasks[dailyIndex];
       const newDailyTasks = [...dailyTasks];
       newDailyTasks.splice(dailyIndex, 1);
       onButtonClick(newDailyTasks);
+      axios
+        .delete(`http://localhost:5000/dailytasks/${taskToDelete}`)
+        .then((response) => console.log(response.data))
+        .catch((error) => console.error("Error:", error));
     }
-
-    axios
-      .delete(`http://localhost:5000/days/${dayName}/tasks/${taskToDelete}`)
-      .then((response) => console.log(response.data))
-      .catch((error) => console.error("Error:", error));
   };
 
   const saveTask = async (
